@@ -63,4 +63,35 @@ public class Estudiante {
     @Column(name = "ES_Estado", length = 20)
     @DefaultValue("Activo")
     private String estado;
+    
+    //Metodo
+    @Depends("totalAsistencias, totalFaltas") 
+    public String getEstadoAcademico() {
+
+        int total = obtenerTotalClases(); 
+        int faltas = obtenerTotalFaltas(); 
+       
+        if (total == 0) {
+            return "SIN DATOS";
+        }
+        
+        double asistenciaEfectiva = total - faltas;
+        double porcentaje = (asistenciaEfectiva / total) * 100.0;
+        if (porcentaje < 70.0) {
+            return "REPROBADO POR FALTAS";
+        } else if (porcentaje < 80.0) {
+            return "EN RIESGO ACADÉMICO"; 
+        } else if (porcentaje < 90.0) {
+            return "ASISTENCIA REGULAR"; 
+        } else {
+            return "EXCELENTE ASISTENCIA";
+        }
+    }
+    private int obtenerTotalClases() {
+        return 20; 
+    }
+    
+    private int obtenerTotalFaltas() {
+        return 5; 
+    }
 }
