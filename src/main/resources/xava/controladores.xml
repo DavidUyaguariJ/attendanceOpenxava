@@ -31,5 +31,18 @@ https://github.com/openxava/openxava/blob/master/openxavatest/src/main/resources
                 clase="acciones.CrearProfesor"/>        
     </controlador>
     -->
+    <controlador nombre="PaseLista">
+
+        <accion nombre="cargarEstudiantes"
+                clase="com.tuempresa.attendance.utils.CargarEstudiantesAction"
+                etiqueta="Cargar estudiantes"
+                icono="reload"/>
+
+        <accion nombre="guardarAsistencia"
+                clase="com.tuempresa.attendance.utils.GuardarAsistenciaAction"
+                etiqueta="Guardar asistencia"
+                icono="save"/>
+
+    </controlador>
     
 </controladores>

@@ -3,48 +3,49 @@ package com.tuempresa.attendance.modelo;
 import java.util.*;
 
 import javax.persistence.*;
-import javax.ws.rs.*;
 
+import org.apache.logging.log4j.core.config.plugins.validation.constraints.Required;
 import org.openxava.annotations.*;
 
 import lombok.*;
 
 @Entity
-@Table(name = "INSCRIPCION")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Tab(properties = 
-    "estudiante.matricula, estudiante.nombres, curso.codigo, periodo, calificacionFinal, estado")
+@Getter
+@Setter
+@Table(
+    name = "INSCRIPCION",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "UK_INS_EST_CUR",
+            columnNames = {"IN_IdEstudiante", "IN_IdCurso"}
+        )
+    }
+)
 public class Inscripcion {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "UUID")
+    @org.hibernate.annotations.GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name = "IN_Id", updatable = false, nullable = false)
     @Hidden
-    @Column(name = "IN_Id")
-    private Integer id;
+    private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IN_IdEstudiante", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(
+        name = "IN_IdEstudiante",
+        referencedColumnName = "ES_Id"
+    )
     @Required
     private Estudiante estudiante;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "IN_IdCurso", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(
+        name = "IN_IdCurso",
+        referencedColumnName = "CU_Id"
+    )
     @Required
     private Curso curso;
-
-    @Column(name = "IN_Periodo", length = 20, nullable = false)
-    @Required
-    private String periodo;
-
-    @Column(name = "IN_FechaInscripcion")
-    private Date fechaInscripcion;
-
-    @Column(name = "IN_CalificacionFinal", precision = 5, scale = 2)
-    private Double calificacionFinal;
-
-    @Column(name = "IN_Estado", length = 20)
-    @DefaultValue("Cursando")
-    private String estado;
 }

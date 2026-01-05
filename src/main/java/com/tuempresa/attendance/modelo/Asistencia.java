@@ -1,5 +1,6 @@
 package com.tuempresa.attendance.modelo;
 
+import java.time.*;
 import java.util.*;
 
 import javax.persistence.*;
@@ -9,36 +10,54 @@ import org.openxava.annotations.*;
 import lombok.*;
 
 @Entity
-@Table(name = "ASISTENCIA")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Tab(properties =
-    "inscripcion.estudiante.nombres, inscripcion.curso.codigo, fecha, estado")
+@Getter
+@Setter
+@Table(
+    name = "ASISTENCIA",
+    uniqueConstraints = {
+        @UniqueConstraint(
+            name = "UK_AS_CURSO_FECHA",
+            columnNames = {"AS_IdCurso", "AS_Fecha"}
+        )
+    }
+)
 public class Asistencia {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "UUID")
+    @org.hibernate.annotations.GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name = "AS_Id", updatable = false, nullable = false)
     @Hidden
-    @Column(name = "AS_Id")
-    private Integer id;
+    private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "AS_IdInscripcion", nullable = false)
+    @ManyToOne(optional = false)
+    @JoinColumn(
+        name = "AS_IdCurso",
+        referencedColumnName = "CU_Id"
+    )
     @Required
-    private Inscripcion inscripcion;
+    private Curso curso;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(
+        name = "AS_IdProfesor",
+        referencedColumnName = "PR_Id"
+    )
+    @Required
+    private Profesor profesor;
 
     @Column(name = "AS_Fecha", nullable = false)
     @Required
-    private Date fecha;
+    private LocalDate fecha;
 
-    @Column(name = "AS_HoraRegistro")
-    private java.sql.Time horaRegistro;
-
-    @Column(name = "AS_Estado", length = 20, nullable = false)
-    @Required
-    private String estado;
-
-    @Column(name = "AS_Observaciones", length = 255)
-    private String observaciones;
+    @OneToMany(
+        mappedBy = "asistencia",
+        cascade = CascadeType.ALL,
+        orphanRemoval = true
+    )
+    @ListProperties("estudiante.nombres, estudiante.apellidos, asistio")
+    private List<AsistenciaDetalle> detalles;
 }

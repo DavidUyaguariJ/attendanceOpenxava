@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modulos>
+
+    <modulo nombre="Asistencia">
+        <modelo clase="com.tuempresa.attendance.model.Asistencia"/>
+        <controlador nombre="PaseLista"/>
+    </modulo>
+
+</modulos>

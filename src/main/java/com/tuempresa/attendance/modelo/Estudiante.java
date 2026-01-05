@@ -3,95 +3,54 @@ package com.tuempresa.attendance.modelo;
 import java.util.*;
 
 import javax.persistence.*;
-import javax.ws.rs.*;
 
 import org.openxava.annotations.*;
 
 import lombok.*;
 
 @Entity
-@Table(name = "ESTUDIANTE")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-@Tab(properties = "matricula, cedula, nombres, apellidos, grado, grupo, estado")
+@Getter
+@Setter
+@Table(name="ESTUDIANTE")
+@View(name = "Simple", members = "nombres, apellidos")
 public class Estudiante {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(generator = "UUID")
+    @org.hibernate.annotations.GenericGenerator(
+        name = "UUID",
+        strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name="ES_Id", updatable = false, nullable = false)
     @Hidden
-    @Column(name = "ES_Id")
-    private Integer id;
+    private UUID id;
 
-    @Column(name = "ES_Matricula", length = 20, nullable = false)
-    @Required
-    private String matricula;
+    @Hidden
+    @Column(name = "ES_Matricula", nullable = false, updatable = false)
+    private UUID matricula;
 
-    @Column(name = "ES_Cedula", length = 20)
+    @Column(name="ES_Cedula")
     private String cedula;
 
-    @Column(name = "ES_Nombres", length = 100, nullable = false)
-    @Required
+    @Column(name="ES_Nombres")
     private String nombres;
 
-    @Column(name = "ES_Apellidos", length = 100, nullable = false)
-    @Required
+    @Column(name="ES_Apellidos")
     private String apellidos;
 
-    @Column(name = "ES_FechaNacimiento")
-    private Date fechaNacimiento;
-
-    @Column(name = "ES_Genero", length = 20)
-    private String genero;
-
-    @Column(name = "ES_Telefono", length = 20)
+    @Column(name="ES_Telefono")
     private String telefono;
 
-    @Column(name = "ES_Email", length = 100)
+    @Column(name="ES_Email")
     private String email;
 
-    @Column(name = "ES_Direccion", length = 255)
-    @Stereotype("MEMO")
-    private String direccion;
+    @Column(name="ES_Estado")
+    private boolean estado = true;
 
-    @Column(name = "ES_Grado", length = 50)
-    private String grado;
-
-    @Column(name = "ES_Grupo", length = 10)
-    private String grupo;
-
-    @Column(name = "ES_Estado", length = 20)
-    @DefaultValue("Activo")
-    private String estado;
-    
-    //Metodo
-    @Depends("totalAsistencias, totalFaltas") 
-    public String getEstadoAcademico() {
-
-        int total = obtenerTotalClases(); 
-        int faltas = obtenerTotalFaltas(); 
-       
-        if (total == 0) {
-            return "SIN DATOS";
+    @PrePersist
+    private void generarMatricula() {
+        if (matricula == null) {
+            matricula = UUID.randomUUID();
         }
-        
-        double asistenciaEfectiva = total - faltas;
-        double porcentaje = (asistenciaEfectiva / total) * 100.0;
-        if (porcentaje < 70.0) {
-            return "REPROBADO POR FALTAS";
-        } else if (porcentaje < 80.0) {
-            return "EN RIESGO ACADÉMICO"; 
-        } else if (porcentaje < 90.0) {
-            return "ASISTENCIA REGULAR"; 
-        } else {
-            return "EXCELENTE ASISTENCIA";
-        }
-    }
-    private int obtenerTotalClases() {
-        return 20; 
-    }
-    
-    private int obtenerTotalFaltas() {
-        return 5; 
     }
 }
