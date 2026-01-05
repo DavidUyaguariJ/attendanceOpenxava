@@ -3,15 +3,18 @@ package com.tuempresa.attendance.modelo;
 import java.util.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import org.openxava.annotations.*;
+
+import com.tuempresa.attendance.utils.*;
 
 import lombok.*;
 
 @Entity
 @Getter
 @Setter
-@Table(name="ESTUDIANTE")
+@Table(name = "ESTUDIANTE")
 @View(name = "Simple", members = "nombres, apellidos")
 public class Estudiante {
 
@@ -21,7 +24,7 @@ public class Estudiante {
         name = "UUID",
         strategy = "org.hibernate.id.UUIDGenerator"
     )
-    @Column(name="ES_Id", updatable = false, nullable = false)
+    @Column(name = "ES_Id", updatable = false, nullable = false)
     @Hidden
     private UUID id;
 
@@ -29,22 +32,33 @@ public class Estudiante {
     @Column(name = "ES_Matricula", nullable = false, updatable = false)
     private UUID matricula;
 
-    @Column(name="ES_Cedula")
+    @Required
+    @CedulaEcuatoriana
+    @Column(name = "ES_Cedula", length = 10)
     private String cedula;
 
-    @Column(name="ES_Nombres")
+    @Required
+    @Column(name = "ES_Nombres")
     private String nombres;
 
-    @Column(name="ES_Apellidos")
+    @Required
+    @Column(name = "ES_Apellidos")
     private String apellidos;
 
-    @Column(name="ES_Telefono")
+    @Required
+    @Pattern(
+        regexp = "\\d{7,10}",
+        message = "El teléfono debe contener solo números"
+    )
+    @Column(name = "ES_Telefono")
     private String telefono;
 
-    @Column(name="ES_Email")
+    @Required
+    @Email(message = "Correo electrónico inválido")
+    @Column(name = "ES_Email")
     private String email;
 
-    @Column(name="ES_Estado")
+    @Column(name = "ES_Estado")
     private boolean estado = true;
 
     @PrePersist
