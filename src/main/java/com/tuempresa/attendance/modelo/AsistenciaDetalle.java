@@ -12,6 +12,7 @@ import lombok.*;
 @Getter
 @Setter
 @Table(name = "ASISTENCIA_DETALLE")
+
 public class AsistenciaDetalle {
 
     @Id

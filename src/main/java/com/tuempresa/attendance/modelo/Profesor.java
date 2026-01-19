@@ -3,8 +3,11 @@ package com.tuempresa.attendance.modelo;
 import java.util.*;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import org.openxava.annotations.*;
+
+import com.tuempresa.attendance.utils.*;
 
 import lombok.*;
 
@@ -33,22 +36,34 @@ public class Profesor {
     )
     private UUID numeroEmpleado;
 
+    @Required
+    @CedulaEcuatoriana
     @Column(name="PR_Cedula")
     private String cedula;
 
+    @Required
     @Column(name="PR_Nombres")
     private String nombres;
 
+    @Required
     @Column(name="PR_Apellidos")
     private String apellidos;
 
+    @Required
     @Column(name="PR_Especialidad")
     private String especialidad;
 
-    @Column(name="PR_Telefono")
+    @Required
+    @Pattern(
+        regexp = "\\d{7,10}",
+        message = "El teléfono debe contener solo números"
+    )
+    @Column(name = "PR_Telefono")
     private String telefono;
 
-    @Column(name="PR_Email")
+    @Required
+    @Email(message = "Correo electrónico inválido")
+    @Column(name = "PR_Email")
     private String email;
 
     @Column(name="PR_Estado")
